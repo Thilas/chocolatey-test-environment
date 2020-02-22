@@ -32,12 +32,14 @@ Vagrant.configure("2") do |config|
     # No audo
     v.customize ["modifyvm", :id, "--audio", "none"]
     # Clipboard enabled
-    v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
     v.customize ["modifyvm", :id, "--draganddrop", "hosttoguest"]
     # For performance
     v.customize ["modifyvm", :id, "--usb", "off"]
     # Huge performance gain here
     v.linked_clone = true if Vagrant::VERSION >= '1.8.0'
+    # virtualbox name
+    v.name = "chocolatey_test_environment_windows_2012"
   end
 
   # https://www.vagrantup.com/docs/hyperv/configuration.html
@@ -111,11 +113,13 @@ Vagrant.configure("2") do |config|
     config.vm.provision :shell, :path => "shell/InstallNet4.ps1"
     config.vm.provision :shell, :path => "shell/InstallChocolatey.ps1"
     config.vm.provision :shell, :path => "shell/NotifyGuiAppsOfEnvironmentChanges.ps1"
+    config.vm.provision :shell, :path => "shell/TestPackages.ps1", :args => ENV['PACKAGES'], :run => "always"
   else
-    config.vm.provision :shell, :path => "shell/PrepareWindows.ps1", :powershell_elevated_interactive => true
-    config.vm.provision :shell, :path => "shell/InstallNet4.ps1", :powershell_elevated_interactive => true
-    config.vm.provision :shell, :path => "shell/InstallChocolatey.ps1", :powershell_elevated_interactive => true
-    config.vm.provision :shell, :path => "shell/NotifyGuiAppsOfEnvironmentChanges.ps1", :powershell_elevated_interactive => true
+    config.vm.provision :shell, :path => "shell/PrepareWindows.ps1", privileged: false
+    config.vm.provision :shell, :path => "shell/InstallNet4.ps1", privileged: false
+    config.vm.provision :shell, :path => "shell/InstallChocolatey.ps1", privileged: false
+    config.vm.provision :shell, :path => "shell/NotifyGuiAppsOfEnvironmentChanges.ps1", privileged: false
+    config.vm.provision :shell, :path => "shell/TestPackages.ps1", privileged: false, :args => ENV['PACKAGES'], :run => "always"
   end
 
 $packageTestScript = <<SCRIPT
@@ -145,6 +149,6 @@ SCRIPT
   if Vagrant::VERSION < '1.8.0'
     config.vm.provision :shell, :inline => $packageTestScript
   else
-    config.vm.provision :shell, :inline => $packageTestScript, :powershell_elevated_interactive => true
+    config.vm.provision :shell, :inline => $packageTestScript, privileged: false
   end
 end

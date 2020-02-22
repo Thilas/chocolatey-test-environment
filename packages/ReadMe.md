@@ -1,3 +1,5 @@
-Everything in here is ignored.
+Add chocolatey packages here (*.nupkg).
 
-Drop your package for testing here and update the last line in the Vagrantfile.
+On machine start, all packages here will be tested.
+
+It is recommended to use AU function `Test-Package` with option `-Vagrant` as it will take care of those details.

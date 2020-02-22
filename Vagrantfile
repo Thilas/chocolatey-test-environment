@@ -12,9 +12,7 @@ end
 
 # http://docs.vagrantup.com/v2/vagrantfile/machine_settings.html
 Vagrant.configure("2") do |config|
-  # This setting will download the atlas box at
-  # https://atlas.hashicorp.com/ferventcoder/boxes/win2012r2-x64-nocm
-  config.vm.box = "ferventcoder/win2012r2-x64-nocm"
+  config.vm.box = "StefanScherer/windows_2019"
 
   # http://docs.vagrantup.com/v2/providers/configuration.html
   # http://docs.vagrantup.com/v2/virtualbox/configuration.html
@@ -39,7 +37,7 @@ Vagrant.configure("2") do |config|
     # Huge performance gain here
     v.linked_clone = true if Vagrant::VERSION >= '1.8.0'
     # virtualbox name
-    v.name = "chocolatey_test_environment_windows_2012"
+    v.name = "chocolatey_test_environment_windows_2019"
   end
 
   # https://www.vagrantup.com/docs/hyperv/configuration.html
